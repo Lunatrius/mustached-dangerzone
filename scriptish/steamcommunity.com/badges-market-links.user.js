@@ -3,11 +3,11 @@
 // ==UserScript==
 // @id             com.steamcommunity.badges-market-links@com.github.lunatrius.mustached-dangerzone
 // @name           Steam :: Badges :: Market Links
-// @version        0.1
+// @version        0.1.1
 // @namespace      Lunatrius
 // @author         Lunatrius <lunatrius@gmail.com>
 // @description    Add links to the market for easier shopping!
-// @include        http://steamcommunity.com/id/lunatrius/gamecards/*/
+// @include        http://steamcommunity.com/id/*/gamecards/*/
 // @run-at         document-end
 // ==/UserScript==
 
