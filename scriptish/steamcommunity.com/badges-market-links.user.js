@@ -1,42 +1,78 @@
-/*jslint devel: true, browser: true, regexp: true, continue: true, plusplus: true, maxerr: 50, indent: 4 */
+/*jslint devel: true, browser: true, regexp: true, continue: true, plusplus: true, maxerr: 50, indent: 4, nomen: true */
 /*global unsafeWindow: false */
 
 // ==UserScript==
-// @id             com.steamcommunity.badges-market-links@com.github.lunatrius.mustached-dangerzone
+// @id             badges-market-links@mustached-dangerzone
 // @name           Steam :: Badges :: Market Links
-// @version        0.2
+// @version        0.3
 // @namespace      Lunatrius
 // @author         Lunatrius <lunatrius@gmail.com>
 // @description    Add links to the market for easier shopping!
 // @match          http://steamcommunity.com/id/*/gamecards/*/
-// @match          http://steamcommunity.com/id/*/inventory/*
-// @updateURL      https://raw.github.com/Lunatrius/mustached-dangerzone/master/scriptish/steamcommunity.com/badges-market-links.user.js
+// @match          http://steamcommunity.com/id/*/inventory*
+// @updateURL      https://raw.github.com/Lunatrius/mustached-dangerzone/master/scriptish/steamcommunity.com/badges-market-links.meta.js
+// @downloadURL    https://raw.github.com/Lunatrius/mustached-dangerzone/master/scriptish/steamcommunity.com/badges-market-links.user.js
 // @icon           https://raw.github.com/Lunatrius/mustached-dangerzone/master/scriptish/steamcommunity.com/icon.png
-//  icon source    http://nickts.deviantart.com/art/Steam-Stripe-Icon-163889127
 // @run-at         document-end
 // ==/UserScript==
 
-(function () {
-	// 'use strict';
+(function (window) {
+	'use strict';
 
-	if (/gamecards/i.test(location.pathname)) {
-		var $, addLinks, jQueryLoaded, script;
+	window.__badges_market_links = {
+		$: null,
 
-		jQueryLoaded = function (event) {
-			unsafeWindow.$$ = unsafeWindow.$;
-			unsafeWindow.$ = $;
-			$ = unsafeWindow.$$;
-
-			if ($ !== undefined && $ !== null) {
-				addLinks();
+		init: function () {
+			if (/gamecards/i.test(location.pathname)) {
+				this.jQueryLoad(this.addCardLinks);
+			} else if (/inventory/i.test(location.pathname)) {
+				this.addInventoryLinks();
 			}
-		};
 
-		addLinks = function (event) {
-			console.log('foobar');
-			var header, match, text, html, name;
+			delete this.init;
 
+			return this;
+		},
+
+		jQueryLoad: function (callback) {
+			var script, scope;
+
+			scope = this;
+			this.$$ = window.$;
+
+			script = document.createElement('script');
+			script.src = '//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js';
+			script.addEventListener('load', function () {
+				return scope.jQueryLoaded();
+			}, false);
+
+			if (callback !== undefined) {
+				script.addEventListener('load', function () {
+					callback.call(scope);
+				}, false);
+			}
+
+			document.body.appendChild(script);
+
+			this.jQueryLoad = function (callback) {
+				callback.call(scope);
+			};
+		},
+
+		jQueryLoaded: function (event) {
+			this.$ = window.jQuery;
+			window.$ = this.$$;
+
+			delete this.$$;
+			delete this.jQueryLoaded;
+		},
+
+		addCardLinks: function () {
+			var $, header, match, text, html, name;
+
+			$ = this.$;
 			header = $('.profile_small_header_text');
+			text = header.find('.profile_small_header_location').last().text();
 
 			header.append(' ');
 			header.append(
@@ -48,7 +84,7 @@
 			header.append(
 				$('<a></a>')
 					.addClass('whiteLink')
-					.attr('href', '#')
+					.attr('href', '/market/search?q=' + encodeURIComponent(text))
 					.append(
 						$('<span></span>')
 							.text('Market')
@@ -70,32 +106,25 @@
 					}
 				});
 			}
-		};
+		},
 
-		// add jQuery
-		$ = unsafeWindow.$;
-		script = document.createElement('script');
-		script.src = '//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js';
-		script.addEventListener('load', jQueryLoaded, false);
-		document.body.appendChild(script);
-	}
+		addInventoryLinks: function () {
+			var populateActionsOld = window.PopulateActions;
 
-	if (/inventory/i.test(location.pathname)) {
-		var populateActionsOld = unsafeWindow.PopulateActions;
+			window.PopulateActions = function (elActions, rgActions, item) {
+				populateActionsOld(elActions, rgActions, item);
 
-		unsafeWindow.PopulateActions = function (elActions, rgActions, item) {
-			populateActionsOld(elActions, rgActions, item);
+				if (/Trading Card/i.test(item.type)) {
+					var elAction = new window.Element('a', {
+						'class': 'item_action',
+						'href': '/market/listings/753/' + encodeURIComponent(item.market_hash_name),
+						'target': 'steamcommunitymarket'
+					});
+					elAction.update('View on market');
 
-			if (/Trading Card/i.test(item.type)) {
-				var elAction = new unsafeWindow.Element('a', {
-					'class': 'item_action',
-					'href': '/market/listings/753/' + encodeURIComponent(item.market_hash_name),
-					'target': 'steamcommunitymarket'
-				});
-				elAction.update('View on market');
-
-				elActions.appendChild(elAction);
-			}
-		};
-	}
-}());
+					elActions.appendChild(elAction);
+				}
+			};
+		}
+	}.init();
+}(unsafeWindow));
