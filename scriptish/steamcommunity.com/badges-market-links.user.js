@@ -4,7 +4,7 @@
 // ==UserScript==
 // @id             badges-market-links@mustached-dangerzone
 // @name           Steam :: Badges :: Market Links
-// @version        0.3.1
+// @version        0.3.2
 // @namespace      Lunatrius
 // @author         Lunatrius <lunatrius@gmail.com>
 // @description    Add links to the market for easier shopping!
@@ -129,7 +129,7 @@ if ('undefined' === typeof __PAGE_SCOPE_RUN__) {
 			window.PopulateActions = function (elActions, rgActions, item) {
 				populateActionsOld(elActions, rgActions, item);
 
-				if (/Trading Card/i.test(item.type)) {
+				if (/(Trading Card|Profile Background|Emoticon|Booster Pack)$/i.test(item.type)) {
 					var elAction = new window.Element('a', {
 						'class': 'item_action',
 						'href': '/market/listings/753/' + encodeURIComponent(item.market_hash_name),
@@ -137,6 +137,10 @@ if ('undefined' === typeof __PAGE_SCOPE_RUN__) {
 					});
 					elAction.update('View on market');
 
+					// TODO: fix double buttons on Profile Backgrounds and Emoticons
+					if (item.owner_actions === undefined) {
+						elActions.show();
+					}
 					elActions.appendChild(elAction);
 				}
 			};

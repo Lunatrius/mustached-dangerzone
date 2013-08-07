@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             badges-market-links@mustached-dangerzone
 // @name           Steam :: Badges :: Market Links
-// @version        0.3.1
+// @version        0.3.2
 // @namespace      Lunatrius
 // @author         Lunatrius <lunatrius@gmail.com>
 // @description    Add links to the market for easier shopping!
