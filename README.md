@@ -1,5 +1,5 @@
 # About
-``mustached-dangerzone`` is the home ov various plug-ins, scripts etc for various
+``mustached-dangerzone`` is the home of various plug-ins, scripts etc for various
 programs.
 
 # Why mustached-dangerzone?
