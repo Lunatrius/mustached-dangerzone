@@ -4,4 +4,5 @@
 !/znc/modules/
 !/znc/modules/data/
 !/znc/modules/data/watch2/
+!/znc/modules/rollback.cpp
 !/znc/modules/watch2.cpp
