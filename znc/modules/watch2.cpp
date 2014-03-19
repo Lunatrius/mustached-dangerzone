@@ -354,10 +354,10 @@ private:
 
 				if (m_pNetwork->IsUserAttached()) {
 					for (list<CString>::iterator itMsg = lMessages.begin(); itMsg != lMessages.end(); ++itMsg) {
-						m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :---");
+						m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :" + *itMsg);
 					}
 					if (lMessages.size() > 1) {
-						m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :" + *itMsg);
+						m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :---");
 					}
 				} else {
 					for (list<CString>::iterator itMsg = lMessages.begin(); itMsg != lMessages.end(); ++itMsg) {
