@@ -1,0 +1,89 @@
+<? INC Header.tmpl ?>
+
+<style type="text/css">
+#watch2_configure input {
+	width: auto;
+	height: auto;
+}
+
+#watch2_configure input.inp {
+	width: 75pt;
+}
+
+#watch2_configure td {
+	text-align: center;
+}
+</style>
+<script type="text/javascript">
+	window.watch2index = 1;
+
+	function addRow(hostmask, target, pattern, sources, off, detachedonly) {
+		var element = document.getElementById('watch2tbody');
+
+		var tr = document.createElement('tr');
+		tr.innerHTML = '<td><input name="hostmask_' + window.watch2index + '" value="' + hostmask + '" class="inp" /></td>' +
+			'<td><input name="target_' + window.watch2index + '" value="' + target + '" class="inp" /></td>' +
+			'<td><input name="pattern_' + window.watch2index + '" value="' + pattern + '" class="inp" /></td>' +
+			'<td><input name="sources_' + window.watch2index + '" value="' + sources + '" class="inp" /></td>' +
+			'<td><input name="off_' + window.watch2index + '" type="checkbox"' + (off ? ' checked="checked"' : '') + ' /></td>' +
+			'<td><input name="detachedonly_' + window.watch2index + '" type="checkbox"' + (detachedonly ? ' checked="checked"' : '') + ' /></td>' +
+			'<td><input type="button" value="X" onclick="removeRow(this, ' + window.watch2index + ')" /></td>';
+
+		var input = document.createElement('input');
+		input.id = 'has_' + window.watch2index;
+		input.name = 'has_' + window.watch2index;
+		input.type = 'hidden';
+		input.value = '1';
+
+		element.appendChild(tr);
+		element.appendChild(input);
+
+		window.watch2index++;
+	}
+
+	function removeRow(node, index) {
+		node.parentNode.parentNode.parentNode.removeChild(node.parentNode.parentNode);
+		node = document.getElementById('has_' + index);
+		if (node) {
+			node.value = '0';
+		}
+	}
+</script>
+<form method="post" action="">
+	<? INC _csrf_check.tmpl ?>
+	<div class="section">
+		<h3><? VAR Title ?></h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection full">
+					<table class="data" id="watch2_configure">
+						<thead>
+							<tr>
+								<td>Hostmask</td>
+								<td>Target</td>
+								<td>Pattern</td>
+								<td>Sources</td>
+								<td>Off</td>
+								<td>Detached Only</td>
+								<td>X</td>
+							</tr>
+						</thead>
+						<tbody id="watch2tbody">
+							<script>
+							<? LOOP ConfigureLoop SORTASC=Name ?>
+								addRow('<? VAR HostMask ?>', '<? VAR Target ?>', '<? VAR Pattern ?>', '<? VAR Sources ?>', <? VAR Off ?>, <? VAR DetachedOnly ?>);
+							<? ENDLOOP ?>
+							</script>
+						</tbody>
+					</table>
+				</div>
+				<div class="subsection submitline">
+					<input type="button" value="Add Another Entry" onclick="addRow('', '', '', '', false, false)" />
+					<input type="submit" name="submit" value="Save" />
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>

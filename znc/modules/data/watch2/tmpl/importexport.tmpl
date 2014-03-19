@@ -1,0 +1,23 @@
+<? INC Header.tmpl ?>
+
+<form method="post" action="">
+	<? INC _csrf_check.tmpl ?>
+	<div class="section">
+		<h3><? VAR Title ?></h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection full">
+					<textarea name="importexport" cols="70" rows="10" class="monospace"><? LOOP ImportExportLoop ?><? VAR ImportExport ?>
+<? ENDLOOP ?>
+</textarea>
+					<br/><span><b>Note:</b> adding or removing lines might cause issues with <i>Del</i>, <i>Enable</i>, <i>Disable</i> and <i>SetDetachedOnly</i>.</span>
+				</div>
+				<div class="subsection submitline">
+					<input type="submit" name="save" value="Save" />
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>

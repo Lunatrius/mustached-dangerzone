@@ -1,0 +1,7 @@
+/znc/*
+/znc/modules/*
+/znc/modules/data/*
+!/znc/modules/
+!/znc/modules/data/
+!/znc/modules/data/watch2/
+!/znc/modules/watch2.cpp
