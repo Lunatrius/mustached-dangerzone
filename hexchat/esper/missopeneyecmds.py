@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = 'MissOpenEye Commands'
 __module_author__ = 'Lunatrius'
-__module_version__ = '0.1'
+__module_version__ = '0.2'
 __module_description__ = 'MissOpenEye Commands'
 
 
@@ -11,6 +11,10 @@ delay = 1
 
 
 def cmd_openeye(word, word_eol, userdata):
+    if hexchat.get_info('channel') != '#OpenEye':
+        print 'You are not in #OpenEye!'
+        return hexchat.EAT_ALL
+
     if word[0].lower() == 'crashnote':
         note = word[len(word) - 1]
         print 'Sending %d messages...' % (len(word) - 2)
