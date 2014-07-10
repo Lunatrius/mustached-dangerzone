@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = 'MissOpenEye Commands'
 __module_author__ = 'Lunatrius'
-__module_version__ = '0.3'
+__module_version__ = '0.3.1'
 __module_description__ = 'MissOpenEye Commands'
 
 
@@ -12,7 +12,7 @@ delay = 1
 
 def cmd_openeye(word, word_eol, userdata):
     if hexchat.get_info('channel') != '#OpenEye':
-        print 'You are not in #OpenEye!'
+        hexchat.prnt('You are not in #OpenEye!')
         return hexchat.EAT_ALL
 
     cmd = word[0].upper()
@@ -50,9 +50,8 @@ def cmd_openeye(word, word_eol, userdata):
         hexchat.prnt('\n'.join(errs))
 
     if cmds:
-        cmds = list(set(cmds))
         hexchat.prnt('Sending %d command(s)...' % (len(cmds)))
-        for i in xrange(0, len(cmds)):
+        for i in range(0, len(cmds)):
             cmd = 'timer %.1f %s' % (i * delay + 0.1, cmds[i])
             hexchat.command(cmd)
 
