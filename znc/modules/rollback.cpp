@@ -15,7 +15,7 @@ public:
 	MODCONSTRUCTOR(CRollbackMod) {
 		m_uiLineCount = 30;
 		m_sPathToLog = "../log";
-		m_sFilename = "$WINDOW_*.log";
+		m_sFilename = "*.log";
 		Load();
 	}
 
@@ -158,7 +158,7 @@ private:
 		while ((dirEntry = readdir(dirStream)) != NULL) {
 			if (!(dirEntry->d_type & DT_DIR)) {
 				CString sName = CString(dirEntry->d_name);
-				if (sName.WildCmp(ReplaceTags(m_sFilename, sWindow))) {
+				if (sName.WildCmp("*-*-*.log")) {
 					files.push_back(sName);
 				}
 			}
@@ -173,7 +173,7 @@ private:
 
 			bool bDate = false;
 			std::string sYear, sMonth, sDay;
-			pcrecpp::RE rDate(ReplaceTags(m_sFilename, sWindow).Replace_n("*", "(\\d{4})(\\d{2})(\\d{2})"));
+			pcrecpp::RE rDate(ReplaceTags(m_sFilename, sWindow).Replace_n("*", "(\\d{4})-(\\d{2})-(\\d{2})"));
 			if (rDate.error().size() == 0 && rDate.FullMatch(sName, &sYear, &sMonth, &sDay)) {
 				bDate = true;
 			}

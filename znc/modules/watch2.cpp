@@ -165,8 +165,8 @@ public:
 		m_uiLength = 5;
 		m_MessageCache.SetTTL(1000 * 3600 * 6);
 		Load();
-		AddSubPage(new CWebSubPage("configure", "Configure", 0));
-		AddSubPage(new CWebSubPage("importexport", "Import/Export", 0));
+		AddSubPage(std::make_shared<CWebSubPage>("configure", "Configure", 0));
+		AddSubPage(std::make_shared<CWebSubPage>("importexport", "Import/Export", 0));
 	}
 
 	virtual ~CWatcherMod() {}
