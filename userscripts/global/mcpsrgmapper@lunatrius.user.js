@@ -24,7 +24,7 @@
 // @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
 // @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1
+// @version        0.1.1
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -105,7 +105,7 @@
         },
 
         parseMapping: function (mapping) {
-            var m = mapping.match(/^(\d+(?:\.\d+)+):((stable)(?:_nodoc)?_(\d+)|(snapshot)(?:_nodoc)?_(\d{8}))$/);
+            var m = mapping && mapping.match(/^(\d+(?:\.\d+)+):((stable)(?:_nodoc)?_(\d+)|(snapshot)(?:_nodoc)?_(\d{8}))$/);
             return m ? [m[1], m[3] || m[5], m[4] || m[6]] : [null, null, null];
         },
 
