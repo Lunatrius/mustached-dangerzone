@@ -24,7 +24,7 @@
 // @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
 // @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.1
+// @version        0.1.2
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -151,7 +151,7 @@
             this.settings = this.settings[location.host];
             if (!this.settings) {
                 GM_addStyle(css.join("\n"));
-                toastr.error("No settings for " + location.host + "... :(");
+                toastr.info("No settings for " + location.host + "... :(");
                 return this;
             }
 
@@ -199,11 +199,7 @@
                 .append($("<a>").addClass("minibutton").text("Remap").click(this.remap.bind(this)))
                 .prependTo(this.settings.insert);
 
-            $("#remap_container select").html("");
-            $.each(this.mappingList, function (index, version) {
-                $("<option>").val(version).text(version).appendTo("#remap_container select");
-            });
-            $("#remap_container select").val(this.currentMapping).chosen();
+            this.populateMappings();
         },
 
         update: function () {
@@ -228,7 +224,7 @@
                     return false;
                 }
             } else {
-                toastr.error("No mappings selected.");
+                toastr.info("No mappings selected.");
             }
             return false;
         },
@@ -286,7 +282,15 @@
             return node.append($("<i>").text(token)).outerHtml();
         },
 
-        saveMappingList: function (data) {
+        populateMappings: function () {
+            $("#remap_container select").html("");
+            $.each(this.mappingList, function (index, version) {
+                $("<option>").val(version).text(version).appendTo("#remap_container select");
+            });
+            $("#remap_container select").val(this.currentMapping).chosen();
+        },
+
+        saveMappingList: function (data, callback) {
             var json = JSON.parse(data);
             this.mappingList = [];
 
@@ -303,7 +307,12 @@
 
             toastr.success("Saved mapping list.");
 
-            this.this.updateMapping();
+            this.updateMapping();
+            this.populateMappings();
+
+            if (callback) {
+                callback();
+            }
         },
 
         mappingUrl: function (mc, type, version) {
