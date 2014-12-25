@@ -33,6 +33,7 @@
 // @grant          GM_getResourceText
 // @grant          GM_xmlhttpRequest
 // @grant          unsafeWindow
+// @license        MIT
 // ==/UserScript==
 
 (function (window) {
