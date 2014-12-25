@@ -24,7 +24,7 @@
 // @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
 // @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.2
+// @version        0.1.3
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -217,7 +217,9 @@
                 if (this.get(this.currentMapping + "_update", 0) + this.updateIntervalMapping < this.time()) {
                     toastr.success("Fetching mappings: " + this.currentMapping);
                     var mapping = this.parseMapping(this.currentMapping);
-                    this.query(this.mappingUrl(mapping[0], mapping[1], mapping[2]), this.saveMappings.bind(this), this.doRemap.bind(this));
+                    this.query(this.mappingUrl(mapping[0], mapping[1], mapping[2]), this.saveMappings.bind(this), function () {
+                        $(this.settings.container).each(this.doRemap.bind(this));
+                    }.bind(this));
                     return true;
                 } else {
                     this.mappings = this.get(this.currentMapping, []);
