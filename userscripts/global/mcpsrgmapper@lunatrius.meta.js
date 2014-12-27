@@ -7,6 +7,7 @@
 // @include        https://github.com/MinecraftForge/MinecraftForge*
 // @include        https://github.com/MinecraftForge/FML/pull/*/files
 // @include        https://github.com/MinecraftForge/MinecraftForge/pull/*/files
+// @include        https://gist.github.com/*/*
 // @include        http://paste.ee/*
 // @include        http://paste.feed-the-beast.com/view/*
 // @include        http://pastebin.com/*
@@ -20,7 +21,7 @@
 // @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
 // @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.4
+// @version        0.1.5
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues

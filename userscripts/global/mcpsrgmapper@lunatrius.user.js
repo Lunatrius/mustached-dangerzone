@@ -11,6 +11,7 @@
 // @include        https://github.com/MinecraftForge/MinecraftForge*
 // @include        https://github.com/MinecraftForge/FML/pull/*/files
 // @include        https://github.com/MinecraftForge/MinecraftForge/pull/*/files
+// @include        https://gist.github.com/*/*
 // @include        http://paste.ee/*
 // @include        http://paste.feed-the-beast.com/view/*
 // @include        http://pastebin.com/*
@@ -24,7 +25,7 @@
 // @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
 // @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.4
+// @version        0.1.5
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -38,6 +39,10 @@
 
 (function (window) {
     "use strict";
+
+    if (window !== window.top) {
+        return;
+    }
 
     $.fn.outerHtml = function () {
         return $("<tmp>").append(this).html();
@@ -64,6 +69,11 @@
                 insert: "div.container>ul.pagehead-actions",
                 container: "#files table tr td.blob-code, .file .type-diff table tr td.blob-code, .inline-review-comment table tr td.blob-code"
             },
+            "gist.github.com": {
+                tag: "li",
+                insert: "div.container>div.title-actions-bar>ul.pagehead-actions",
+                container: ".files .file-data .line-data div.line"
+            },
             "paste.ee": {
                 tag: "span",
                 insert: ".container>.row>.row>.col-sm-12:has(#download)",
@@ -75,7 +85,7 @@
             },
             "paste.feed-the-beast.com": {
                 tag: "span",
-                insert: "div.col-lg-12>div.detail.by",
+                insert: "div.col-lg-12>div.detail.by:eq(1)",
                 container: ".CodeMirror ol li span",
                 css: [
                     "#remap_container { float: right; }",
