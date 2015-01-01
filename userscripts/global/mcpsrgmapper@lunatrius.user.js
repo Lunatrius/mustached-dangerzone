@@ -25,7 +25,7 @@
 // @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
 // @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.5
+// @version        0.1.6
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -45,7 +45,7 @@
     }
 
     $.fn.outerHtml = function () {
-        return $("<tmp>").append(this).html();
+        return $("<tmp></tmp>").append(this).html();
     };
 
     var mapper = {
@@ -85,8 +85,8 @@
             },
             "paste.feed-the-beast.com": {
                 tag: "span",
-                insert: "div.col-lg-12>div.detail.by:eq(1)",
-                container: ".CodeMirror ol li span",
+                insert: "div.col-lg-12>div.detail.by:eq(0)",
+                container: ".CodeMirror ol li div",
                 css: [
                     "#remap_container { float: right; }",
                     "#remap_container a { cursor: pointer; }"
@@ -204,9 +204,9 @@
 
             $("<" + this.settings.tag + ">")
                 .attr("id", "remap_container")
-                .append($("<select>").change(this.changeMapping.bind(this)))
+                .append($("<select></select>").change(this.changeMapping.bind(this)))
                 .append(" ")
-                .append($("<a>").addClass("minibutton").text("Remap").click(this.remap.bind(this)))
+                .append($("<a></a>").addClass("minibutton").text("Remap").click(this.remap.bind(this)))
                 .prependTo(this.settings.insert);
 
             this.populateMappings();
@@ -285,19 +285,19 @@
             var mcpname, node;
 
             mcpname = this.mappings[token];
-            node = $("<u>").attr("title", token);
+            node = $("<u></u>").attr("title", token);
 
-            if (mcpname) {
-                return node.text(mcpname).outerHtml();
+            if (!mcpname) {
+                node.css("font-style", "italic");
             }
 
-            return node.append($("<i>").text(token)).outerHtml();
+            return node.text(mcpname || token).outerHtml();
         },
 
         populateMappings: function () {
             $("#remap_container select").html("");
             $.each(this.mappingList, function (index, version) {
-                $("<option>").val(version).text(version).appendTo("#remap_container select");
+                $("<option></option>").val(version).text(version).appendTo("#remap_container select");
             });
             $("#remap_container select").val(this.currentMapping).chosen();
         },
@@ -319,7 +319,6 @@
 
             toastr.success("Saved mapping list.");
 
-            this.updateMapping();
             this.populateMappings();
 
             if (callback) {
