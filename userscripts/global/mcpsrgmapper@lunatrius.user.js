@@ -25,7 +25,7 @@
 // @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
 // @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.6
+// @version        0.1.7
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -95,7 +95,7 @@
             "pastebin.com": {
                 tag: "span",
                 insert: "#code_frame #code_buttons",
-                container: "#code_frame ol li span",
+                container: "#code_frame ol li span, #code_frame ol li div",
                 css: [
                     "#remap_container { float: right; margin-top: 4pt; }",
                     "#remap_container a { cursor: pointer; }"
@@ -149,10 +149,6 @@
         },
 
         init: function () {
-            if (window !== window.top) {
-                return;
-            }
-
             var css = [
                 GM_getResourceText("toast_css"),
                 GM_getResourceText("chosen_css")
