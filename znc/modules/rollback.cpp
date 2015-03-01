@@ -10,6 +10,116 @@ using std::list;
 using std::vector;
 using std::set;
 
+CString ReplaceTags(const CString& sOriginal, const CString& sNetwork, const CString& sWindow, const CString& sUser) {
+	CString sStr = sOriginal;
+	sStr.Replace("$NETWORK", sNetwork);
+	sStr.Replace("$WINDOW", sWindow.Replace_n("/", "?"));
+	sStr.Replace("$USER", sUser);
+	return sStr;
+}
+
+#ifdef HAVE_PTHREAD
+class CSearchJob : public CModuleJob {
+public:
+	CSearchJob(CModule *pModule, const unsigned int uiLineCount, const CString& sDir, const CString& sFilename, const CString& sNetwork, const CString& sWindow, const CString& sUser, const VCString& vsFiles, const pcrecpp::RE& rPattern) :
+		CModuleJob(pModule, "search", "Find stuff in logs. With regex!"),
+		m_uiLineCount(uiLineCount),
+		m_sDir(sDir),
+		m_sFilename(sFilename),
+		m_sNetwork(sNetwork),
+		m_sWindow(sWindow),
+		m_sUser(sUser),
+		m_vsFiles(vsFiles),
+		m_rPattern(rPattern) {}
+
+	~CSearchJob() {
+		if (wasCancelled()) {
+			// GetModule()->PutModule("Search job canceled");
+		} else {
+			// GetModule()->PutModule("Search job destroyed");
+		}
+	}
+
+	void runThread() override {
+		// Cannot safely use GetModule() in here, because this runs in its
+		// own thread and such an access would require synchronization
+		// between this thread and the main thread!
+
+		unsigned int uiLineCount = m_uiLineCount;
+
+		for (VCString::reverse_iterator itFiles = m_vsFiles.rbegin(); itFiles != m_vsFiles.rend(); ++itFiles) {
+			CString sName = *itFiles;
+			CString sFullName = m_sDir + "/" + sName;
+			unsigned int uiSize = 0;
+
+			bool bDate = false;
+			std::string sYear, sMonth, sDay;
+			pcrecpp::RE rDate(::ReplaceTags(m_sFilename, m_sNetwork, m_sWindow, m_sUser).Replace_n("*", "(\\d{4})-(\\d{2})-(\\d{2})"));
+			if (rDate.error().size() == 0 && rDate.FullMatch(sName, &sYear, &sMonth, &sDay)) {
+				bDate = true;
+			}
+
+			uiSize = m_vsRollback.size();
+			std::ifstream in(sFullName.c_str());
+			if (in.is_open()) {
+				VCString lines_in_order;
+				std::string line;
+				while (std::getline(in, line)) {
+					lines_in_order.push_back(line);
+				}
+
+				for (VCString::reverse_iterator it = lines_in_order.rbegin(); it != lines_in_order.rend() && uiLineCount > 0; ++it) {
+					if (m_rPattern.PartialMatch(*it)) {
+						if (bDate) {
+							if (!it->TrimLeft_n("[").Equals(*it)) {
+								m_vsRollback.push_back("[" + sYear + "-" + sMonth + "-" + sDay + " " + it->TrimLeft_n("["));
+							} else {
+								m_vsRollback.push_back("[" + sYear + "-" + sMonth + "-" + sDay + "] " + *it);
+							}
+						} else {
+							m_vsRollback.push_back(*it);
+						}
+						uiLineCount--;
+					}
+				}
+			}
+
+			if (!bDate && uiSize < m_vsRollback.size()) {
+				m_vsRollback.push_back("========= " + sName + " =========");
+			}
+
+			if (uiLineCount == 0) {
+				break;
+			}
+		}
+	}
+
+	void runMain() override {
+		CModule *pModule = GetModule();
+
+		for (VCString::reverse_iterator it = m_vsRollback.rbegin(); it != m_vsRollback.rend(); ++it) {
+			pModule->PutModule(*it);
+		}
+
+		if (m_vsRollback.size() == 0) {
+			pModule->PutModule("No results.");
+		}
+	}
+
+	unsigned int  m_uiLineCount;
+	CString       m_sDir;
+	CString       m_sFilename;
+	CString       m_sNetwork;
+	CString       m_sWindow;
+	CString       m_sUser;
+
+	VCString      m_vsFiles;
+	pcrecpp::RE   m_rPattern;
+
+	VCString      m_vsRollback;
+};
+#endif
+
 class CRollbackMod : public CModule {
 public:
 	MODCONSTRUCTOR(CRollbackMod) {
@@ -131,7 +241,7 @@ private:
 	}
 
 	void Search(const CString& sWindow, const CString& sPattern) {
-		unsigned int uiLineCount = m_uiLineCount;
+#ifdef HAVE_PTHREAD
 		CString sDir = GetSavePath() + "/" + ReplaceTags(m_sPathToLog, sWindow);
 
 		pcrecpp::RE rPattern("(?i)" + sPattern);
@@ -153,72 +263,25 @@ private:
 			return;
 		}
 
-		VCString files;
+		VCString vsFiles;
 		struct dirent *dirEntry;
 		while ((dirEntry = readdir(dirStream)) != NULL) {
 			if (!(dirEntry->d_type & DT_DIR)) {
 				CString sName = CString(dirEntry->d_name);
 				if (sName.WildCmp("*-*-*.log")) {
-					files.push_back(sName);
+					vsFiles.push_back(sName);
 				}
 			}
 		}
 		closedir(dirStream);
 
-		VCString rollback;
-		for (VCString::reverse_iterator itFiles = files.rbegin(); itFiles != files.rend(); ++itFiles) {
-			CString sName = *itFiles;
-			CString sFullName = sDir + "/" + sName;
-			unsigned int uiSize = 0;
+		CString sNetwork = m_pNetwork ? m_pNetwork->GetName() : "znc";
+		CString sUser = m_pUser ? m_pUser->GetUserName() : "UNKNOWN";
 
-			bool bDate = false;
-			std::string sYear, sMonth, sDay;
-			pcrecpp::RE rDate(ReplaceTags(m_sFilename, sWindow).Replace_n("*", "(\\d{4})-(\\d{2})-(\\d{2})"));
-			if (rDate.error().size() == 0 && rDate.FullMatch(sName, &sYear, &sMonth, &sDay)) {
-				bDate = true;
-			}
-
-			uiSize = rollback.size();
-			std::ifstream in(sFullName.c_str());
-			if (in.is_open()) {
-				VCString lines_in_order;
-				std::string line;
-				while (std::getline(in, line)) {
-					lines_in_order.push_back(line);
-				}
-
-				for (VCString::reverse_iterator it = lines_in_order.rbegin(); it != lines_in_order.rend() && uiLineCount > 0; ++it) {
-					if (rPattern.PartialMatch(*it)) {
-						if (bDate) {
-							if (!it->TrimLeft_n("[").Equals(*it)) {
-								rollback.push_back("[" + sYear + "-" + sMonth + "-" + sDay + " " + it->TrimLeft_n("["));
-							} else {
-								rollback.push_back("[" + sYear + "-" + sMonth + "-" + sDay + "] " + *it);
-							}
-						} else {
-							rollback.push_back(*it);
-						}
-						uiLineCount--;
-					}
-				}
-			}
-
-			if (!bDate && uiSize < rollback.size()) {
-				rollback.push_back("========= " + sName + " =========");
-			}
-
-			if (uiLineCount == 0) {
-				break;
-			}
-		}
-
-		for (VCString::reverse_iterator it = rollback.rbegin(); it != rollback.rend(); ++it) {
-			PutModule(*it);
-		}
-
-		if (uiLineCount == m_uiLineCount) {
-			PutModule("No results.");
-		}
+		AddJob(new CSearchJob(this, m_uiLineCount, sDir, m_sFilename, sNetwork, sWindow, sUser, vsFiles, rPattern));
+#else
+		PutModule("Missing pthread!");
+#endif
 	}
 
 	void Save() {
@@ -257,11 +320,7 @@ private:
 	}
 
 	CString ReplaceTags(const CString& sOriginal, const CString& sWindow) {
-		CString sStr = sOriginal;
-		sStr.Replace("$NETWORK", (m_pNetwork ? m_pNetwork->GetName() : "znc"));
-		sStr.Replace("$WINDOW", sWindow.Replace_n("/", "?"));
-		sStr.Replace("$USER", (m_pUser ? m_pUser->GetUserName() : "UNKNOWN"));
-		return sStr;
+		return ::ReplaceTags(sOriginal, m_pNetwork ? m_pNetwork->GetName() : "znc", sWindow, m_pUser ? m_pUser->GetUserName() : "UNKNOWN");
 	}
 
 	unsigned int  m_uiLineCount;
