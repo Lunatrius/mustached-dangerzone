@@ -26,7 +26,7 @@
 // @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
 // @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.8
+// @version        0.1.8.1
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -82,7 +82,8 @@
                     container: "span.highlight_method",
                     css: [
                         "#remap_container { float: right; }",
-                        "#remap_container a { cursor: pointer; }"
+                        "#remap_container a.minibutton { padding: 3px; border: 1px outset #DDDDDD; border-radius: 4px; cursor: pointer; }",
+                        "#remap_container a.minibutton.selected { padding: 3px; border: 1px inset #DDDDDD; border-radius: 4px; cursor: pointer; }"
                     ].join("\n")
                 },
                 "paste.ee": {
@@ -91,7 +92,8 @@
                     container: "#paste-content ol li div",
                     css: [
                         "#remap_container { float: right; }",
-                        "#remap_container a { cursor: pointer; }"
+                        "#remap_container a.minibutton { padding: 3px; border: 1px outset #DDDDDD; border-radius: 4px; cursor: pointer; }",
+                        "#remap_container a.minibutton.selected { padding: 3px; border: 1px inset #DDDDDD; border-radius: 4px; cursor: pointer; }"
                     ].join("\n")
                 },
                 "paste.feed-the-beast.com": {
@@ -100,7 +102,8 @@
                     container: ".CodeMirror ol li div",
                     css: [
                         "#remap_container { float: right; }",
-                        "#remap_container a { cursor: pointer; }"
+                        "#remap_container a.minibutton { padding: 3px; border: 1px outset #DDDDDD; border-radius: 4px; cursor: pointer; }",
+                        "#remap_container a.minibutton.selected { padding: 3px; border: 1px inset #DDDDDD; border-radius: 4px; cursor: pointer; }"
                     ].join("\n")
                 },
                 "pastebin.com": {
@@ -109,7 +112,8 @@
                     container: "#code_frame ol li span, #code_frame ol li div",
                     css: [
                         "#remap_container { float: right; margin-top: 4pt; }",
-                        "#remap_container a { cursor: pointer; }"
+                        "#remap_container a.minibutton { padding: 3px; border: 1px outset #DDDDDD; border-radius: 4px; cursor: pointer; }",
+                        "#remap_container a.minibutton.selected { padding: 3px; border: 1px inset #DDDDDD; border-radius: 4px; cursor: pointer; }"
                     ].join("\n")
                 }
             },
