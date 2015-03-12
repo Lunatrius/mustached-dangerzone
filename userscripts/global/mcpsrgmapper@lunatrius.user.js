@@ -26,7 +26,7 @@
 // @resource       toast_css https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css
 // @resource       chosen_css https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.8.1
+// @version        0.1.9
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -190,6 +190,32 @@
                 this.setCurrentMapping(this.get("selected", ""));
 
                 this.mappingList = this.get("mappings", []);
+
+                try {
+                    var match = $("body").text().match(/(?:Minecraft|Minecraft Version:) (\d+\.\d+(?:\.\d+)?)/);
+                    if (match) {
+                        var split = this.currentMapping.split(/:/);
+
+                        if (match[1] !== split[0]) {
+                            var found = false;
+                            $.each(this.mappingList, function (index, version) {
+                                var split = version.split(/:/);
+                                if (match[1] === split[0]) {
+                                    found = version;
+                                    return false;
+                                }
+                            });
+
+                            if (found !== false) {
+                                toastr.info("Switching mappings to " + found);
+                                this.setCurrentMapping(found);
+                                this.set("selected", this.currentMapping);
+                            } else {
+                                toastr.warning("Detected Minecraft " + match[1] + " but no mappings available!");
+                            }
+                        }
+                    }
+                } catch (ignore) {}
 
                 $.each(this.list(), function (index, version) {
                     if (this.regexMapping.test(version) && $.inArray(version, this.mappingList) === -1) {
