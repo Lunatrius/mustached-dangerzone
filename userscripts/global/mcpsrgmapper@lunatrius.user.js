@@ -19,12 +19,12 @@
 // @exclude        http://paste.ee/
 // @exclude        http://pastebin.com/
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js
-// @require        https://raw.githubusercontent.com/defunkt/jquery-pjax/master/jquery.pjax.js
-// @require        https://raw.githubusercontent.com/Stuk/jszip/master/dist/jszip.min.js
-// @require        https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.js
-// @require        http://harvesthq.github.io/chosen/chosen.jquery.js
-// @resource       toast_css https://raw.githubusercontent.com/CodeSeven/toastr/master/build/toastr.min.css
-// @resource       chosen_css http://harvesthq.github.io/chosen/chosen.css
+// @require        https://cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.2/jquery.pjax.min.js
+// @require        https://cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min.js
+// @require        https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/js/toastr.min.js
+// @require        https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js
+// @resource       toast_css https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css
+// @resource       chosen_css https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
 // @version        0.1.8.1
 // @grant          GM_setValue
