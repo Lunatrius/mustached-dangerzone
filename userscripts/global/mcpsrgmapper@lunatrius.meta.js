@@ -9,9 +9,11 @@
 // @include        https://github.com/MinecraftForge/MinecraftForge/pull/*/files
 // @include        https://gist.github.com/*/*
 // @include        http://openeye.openmods.info/crashes/*
+// @include        https://paste.ee/*
 // @include        http://paste.ee/*
 // @include        http://paste.feed-the-beast.com/view/*
 // @include        http://pastebin.com/*
+// @exclude        https://paste.ee/
 // @exclude        http://paste.ee/
 // @exclude        http://pastebin.com/
 // @require        https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js
@@ -22,7 +24,7 @@
 // @resource       toast_css https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css
 // @resource       chosen_css https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.9
+// @version        0.1.10
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
