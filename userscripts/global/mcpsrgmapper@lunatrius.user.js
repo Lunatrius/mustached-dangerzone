@@ -28,7 +28,7 @@
 // @resource       toast_css https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css
 // @resource       chosen_css https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.10
+// @version        0.1.11
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
@@ -335,10 +335,43 @@
 
             populateMappings: function () {
                 $("#remap_container select").html("");
+                this.mappingList.sort(this.cmpMapping.bind(this));
                 $.each(this.mappingList, function (index, version) {
                     $("<option></option>").val(version).text(version).appendTo("#remap_container select");
                 });
                 $("#remap_container select").val(this.currentMapping).chosen();
+            },
+
+            cmpMapping: function (a, b) {
+                a = a.split(/[:_]/i);
+                b = b.split(/[:_]/i);
+
+                if (a[0] != b[0]) {
+                    return this.cmpVersion(a[0], b[0]);
+                }
+
+                if (a[1] != b[1]) {
+                    return a[1] < b[1];
+                }
+
+                if (a[2] != b[2]) {
+                    return a[2] < b[2];
+                }
+
+                return 0;
+            },
+
+            cmpVersion: function (a, b) {
+                a = a.split(/\./gi);
+                b = b.split(/\./gi);
+
+                for (var i = 0 ; i < a.length && i < b.length; i++) {
+                    if (a[i] !== b[i]) {
+                        return parseInt(a[i]) < parseInt(b[i]);
+                    }
+                }
+
+                return a.length < b.length;
             },
 
             saveMappingList: function (data, callback) {

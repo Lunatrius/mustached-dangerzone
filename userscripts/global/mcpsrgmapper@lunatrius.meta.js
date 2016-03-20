@@ -24,7 +24,7 @@
 // @resource       toast_css https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css
 // @resource       chosen_css https://cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.css
 // @updateURL      https://raw.githubusercontent.com/Lunatrius/mustached-dangerzone/master/userscripts/global/mcpsrgmapper@lunatrius.meta.js
-// @version        0.1.10
+// @version        0.1.11
 // @grant          GM_setValue
 // @grant          GM_getValue
 // @grant          GM_listValues
